@@ -25,11 +25,13 @@
 #define VIRTIO_ID_NET		1 /* virtio net */
 #define VIRTIO_ID_BLOCK		2 /* virtio block */
 #define VIRTIO_ID_RNG		4 /* virtio rng */
-#define VIRTIO_ID_MAX_NUM	5
+#define VIRTIO_ID_RPMB		28 /* virtio rpmb */
+#define VIRTIO_ID_MAX_NUM	29
 
 #define VIRTIO_NET_DRV_NAME	"virtio-net"
 #define VIRTIO_BLK_DRV_NAME	"virtio-blk"
 #define VIRTIO_RNG_DRV_NAME	"virtio-rng"
+#define VIRTIO_RPMB_DRV_NAME	"virtio-rpmb"
 
 /* Status byte for guest to report progress, and synchronize features */
 

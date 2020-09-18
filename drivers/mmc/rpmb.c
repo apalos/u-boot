@@ -254,6 +254,7 @@ int mmc_rpmb_set_key(struct mmc *mmc, void *key)
 	/* Fill the request */
 	memset(rpmb_frame, 0, sizeof(struct s_rpmb));
 	rpmb_frame->request = cpu_to_be16(RPMB_REQ_KEY);
+	rpmb_frame->block_count = cpu_to_be16(1);
 	memcpy(rpmb_frame->mac, key, RPMB_SZ_MAC);
 
 	if (mmc_rpmb_request(mmc, rpmb_frame, 1, true))

@@ -67,4 +67,13 @@ config VIRTIO_RNG
 	help
 	  This is the virtual random number generator driver. It can be used
 	  with QEMU based targets.
+
+config VIRTIO_RPMB
+	bool "virtio RPMB driver"
+	depends on VIRTIO
+	default y
+	help
+	  This is the virtual RPMB driver for virtio. It can be used
+	  with QEMU based targets.
+
 endmenu
