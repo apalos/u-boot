@@ -29,6 +29,14 @@ enum tpm_timeout {
 	SLEEP_DURATION_LONG_US		= 210,
 };
 
+#define TPM_ACCESS(l)                   (0x0000 | ((l) << 12))
+#define TPM_INT_ENABLE(l)               (0x0008 | ((l) << 12))
+#define TPM_STS(l)                      (0x0018 | ((l) << 12))
+#define TPM_DATA_FIFO(l)                (0x0024 | ((l) << 12))
+#define TPM_DID_VID(l)                  (0x0F00 | ((l) << 12))
+#define TPM_RID(l)                      (0x0F04 | ((l) << 12))
+#define TPM_INTF_CAPS(l)                (0x0014 | ((l) << 12))
+
 /* Size of external transmit buffer (used in tpm_transmit)*/
 #define TPM_BUFSIZE 4096
 

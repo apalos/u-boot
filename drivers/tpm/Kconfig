@@ -161,6 +161,13 @@ config TPM2_FTPM_TEE
 	help
 	  This driver supports firmware TPM running in TEE.
 
+config TPM2_MMIO
+	bool "MMIO based TPM2 Interface"
+	depends on TPM_V2
+	help
+	  This driver supports firmware TPM2.0 MMIO interface.
+
+
 endif # TPM_V2
 
 endmenu
