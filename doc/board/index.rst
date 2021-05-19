@@ -21,6 +21,7 @@ Board-specific doc
    rockchip/index
    sifive/index
    sipeed/index
+   socionext/index
    st/index
    tbs/index
    toradex/index
