@@ -152,6 +152,8 @@ static int mtd_block_op(enum dfu_op op, struct dfu_entity *dfu,
 		ret = mtd_lock(mtd, lock_ofs, lock_len);
 		if (ret && ret != -EOPNOTSUPP)
 			printf("MTD device lock failed\n");
+		if (ret == -EOPNOTSUPP)
+			ret = 0;
 	}
 	return ret;
 }
