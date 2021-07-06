@@ -21,6 +21,37 @@
 #include <linux/compiler.h>
 #include <linux/types.h>
 
+struct tpm_tis_phy_ops {
+	int (*read_bytes)(struct udevice *udev, u32 addr, u16 len,
+			  u8 *result);
+	int (*write_bytes)(struct udevice *udev, u32 addr, u16 len,
+			   const u8 *value);
+	int (*read16)(struct udevice *udev, u32 addr, u16 *result);
+	int (*read32)(struct udevice *udev, u32 addr, u32 *result);
+	int (*write32)(struct udevice *udev, u32 addr, u32 src);
+};
+
+enum tis_int_flags {
+	TPM_GLOBAL_INT_ENABLE = 0x80000000,
+	TPM_INTF_BURST_COUNT_STATIC = 0x100,
+	TPM_INTF_CMD_READY_INT = 0x080,
+	TPM_INTF_INT_EDGE_FALLING = 0x040,
+	TPM_INTF_INT_EDGE_RISING = 0x020,
+	TPM_INTF_INT_LEVEL_LOW = 0x010,
+	TPM_INTF_INT_LEVEL_HIGH = 0x008,
+	TPM_INTF_LOCALITY_CHANGE_INT = 0x004,
+	TPM_INTF_STS_VALID_INT = 0x002,
+	TPM_INTF_DATA_AVAIL_INT = 0x001,
+};
+
+#define TPM_ACCESS(l)                   (0x0000 | ((l) << 12))
+#define TPM_INT_ENABLE(l)               (0x0008 | ((l) << 12))
+#define TPM_STS(l)                      (0x0018 | ((l) << 12))
+#define TPM_DATA_FIFO(l)                (0x0024 | ((l) << 12))
+#define TPM_DID_VID(l)                  (0x0F00 | ((l) << 12))
+#define TPM_RID(l)                      (0x0F04 | ((l) << 12))
+#define TPM_INTF_CAPS(l)                (0x0014 | ((l) << 12))
+
 enum tpm_timeout {
 	TPM_TIMEOUT_MS			= 5,
 	TIS_SHORT_TIMEOUT_MS		= 750,
@@ -43,6 +74,7 @@ struct tpm_chip {
 	u8 rid;
 	unsigned long timeout_a, timeout_b, timeout_c, timeout_d;  /* msec */
 	ulong chip_type;
+	struct tpm_tis_phy_ops *phy_ops;
 };
 
 struct tpm_input_header {
@@ -130,4 +162,12 @@ enum tis_status {
 };
 #endif
 
+int tpm_tis_open(struct udevice *udev);
+int tpm_tis_close(struct udevice *udev);
+int tpm_tis_cleanup(struct udevice *udev);
+int tpm_tis_send(struct udevice *udev, const u8 *buf, size_t len);
+int tpm_tis_recv(struct udevice *udev, u8 *buf, size_t count);
+int tpm_tis_get_desc(struct udevice *udev, char *buf, int size);
+int tpm_tis_init(struct udevice *udev);
+void tpm_tis_ops_register(struct udevice *udev, struct tpm_tis_phy_ops *ops);
 #endif
