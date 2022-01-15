@@ -2178,6 +2178,44 @@ out1:
 
 	return ret;
 }
+/**
+ * efi_tcg2_measure_dtb() - measure the dtb used to boot our OS
+ *
+ * @dtb: address of device tree
+ *
+ * Return:	status code
+ */
+efi_status_t efi_tcg2_measure_dtb(void *fdt)
+{
+	efi_status_t ret;
+	struct udevice *dev;
+	u32 event_size;
+	struct uefi_platform_firmware_blob2 *blob;
+
+	if (!is_tcg2_protocol_installed())
+		return EFI_SUCCESS;
+
+	ret = platform_get_tpm2_device(&dev);
+	if (ret != EFI_SUCCESS)
+		return EFI_SECURITY_VIOLATION;
+
+	event_size = sizeof(*blob) + sizeof(EFI_DTB_EVENT_STRING) +
+		fdt_totalsize(fdt);
+	blob = calloc(1, event_size);
+	if (!blob)
+		return EFI_OUT_OF_RESOURCES;
+
+	blob->blob_desc_size = sizeof(EFI_DTB_EVENT_STRING);
+	memcpy(blob->data, EFI_DTB_EVENT_STRING, blob->blob_desc_size);
+	memcpy((void *)((uintptr_t)blob->data + sizeof(EFI_DTB_EVENT_STRING)),
+	       fdt, fdt_totalsize(fdt));
+	ret = tcg2_measure_event(dev, 0, EV_POST_CODE, event_size, (u8 *)blob);
+
+	printf("###################### MEASURE DTB %lx %u\n", ret, event_size);
+
+	free(blob);
+	return ret;
+}
 
 /**
  * efi_tcg2_measure_efi_app_invocation() - measure efi app invocation

@@ -295,6 +295,20 @@ efi_status_t efi_install_fdt(void *fdt)
 		return EFI_LOAD_ERROR;
 	}
 
+	/* measure the installed DTB */
+	if (IS_ENABLED(CONFIG_EFI_TCG2_PROTOCOL)) {
+		ret = efi_tcg2_measure_dtb(fdt);
+		/*
+		 * The protocol is always installed if a TPM device is present.
+		 * If for some reason the device has been removed, after the protocol installatio
+		 * as security violation
+		 */
+		if (ret == EFI_SECURITY_VIOLATION) {
+			log_err("ERROR: TPM2 not present, but the protocol is installed\n");
+			return ret;
+		}
+	}
+
 	/* Prepare device tree for payload */
 	ret = copy_fdt(&fdt);
 	if (ret) {
